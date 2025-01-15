@@ -1,0 +1,217 @@
+/* Root-level variables for color palette & spacing */
+:root {
+    --bg-gradient-start: #f7eee9; /* Light beige */
+    --bg-gradient-end:   #ffe8b0; /* Soft warm yellow */
+    --text-color:        #333333;
+    --heading-color:     #222222;
+    --accent-color:      #f4ca64; /* For buttons or highlights */
+    --border-radius:     6px;
+    --transition-speed:  0.3s;
+  
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 2rem;
+    --spacing-lg: 3rem;
+    --font-body:  "Avenir", sans-serif;
+  }
+  
+  /* Global reset & basic body styling */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html, body {
+    height: 100%;
+    font-family: var(--font-body);
+    color: var(--text-color);
+  }
+  
+  body {
+    background: linear-gradient(
+      to right,
+      var(--bg-gradient-start),
+      var(--bg-gradient-end)
+    );
+    /* Or use “to left” or “to bottom” as desired */
+    background-attachment: fixed; /* optional: keeps gradient in place when scrolling */
+    line-height: 1.6;
+  }
+  
+  /* A simple container to center content & control max width */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+  }
+  
+  /* Headings */
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--heading-color);
+    margin-bottom: var(--spacing-sm);
+    font-family: var(--font-body);
+    font-weight: 600; /* Adjust as desired */
+  }
+  
+  /* Paragraphs & text */
+  p {
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  /* A simple button style */
+  .button,
+  button {
+    display: inline-block;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background-color: var(--accent-color);
+    color: #fff;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color var(--transition-speed), transform var(--transition-speed);
+    font-family: var(--font-body);
+    font-weight: 500;
+    text-decoration: none; /* for link-styled buttons */
+  }
+  
+  .button:hover,
+  button:hover {
+    background-color: darken(var(--accent-color), 10%);
+    /* If your build chain doesn’t support `darken()`,
+       simply pick a darker accent color for the hover. */
+    transform: translateY(-1px);
+  }
+  
+  /* Subtle card component if needed */
+  .card {
+    background-color: #ffffff;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+    transition: box-shadow var(--transition-speed);
+  }
+  
+  .card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  
+  /* Footer or small text styling */
+  .footer-text {
+    font-size: 0.9rem;
+    color: #666666;
+    margin-top: var(--spacing-md);
+  }
+  
+  /* Utility classes for spacing & alignment (optional) */
+  .mt-sm { margin-top: var(--spacing-sm) !important; }
+  .mt-md { margin-top: var(--spacing-md) !important; }
+  .mb-sm { margin-bottom: var(--spacing-sm) !important; }
+  .mb-md { margin-bottom: var(--spacing-md) !important; }
+  .text-center { text-align: center !important; }
+
+  
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Make the body full-height so the sidebar can stretch */
+  html, body {
+    height: 100%;
+    font-family: "Avenir", "Avenir Next", "Segoe UI", sans-serif;
+    background: #f7eee9; /* Example background, or a gradient if you like */
+  }
+  
+  /* Sidebar styling */
+  .sidebar {
+    position: fixed;           /* Stay in place */
+    top: 0;
+    left: 0;
+    height: 100vh;            /* Full viewport height */
+    width: 220px;             /* Fixed sidebar width */
+    background-color: #333;   /* Dark background */
+    padding: 1rem;
+    overflow-y: auto;         /* Scroll if content is tall */
+  }
+  
+  .sidebar-title {
+    color: #fff;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+  }
+  
+  /* Sidebar nav links */
+  .nav-links {
+    list-style: none;
+    padding-left: 0;
+  }
+  
+  .nav-links li {
+    margin-bottom: 0.5rem;
+  }
+  
+  .nav-links a {
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .nav-links a:hover {
+    background-color: #444;
+  }
+  
+  /* Main content area */
+  .main-content {
+    margin-left: 220px; /* Equal to sidebar width */
+    padding: 2rem;
+    min-height: 100vh;  /* So that background covers full height */
+    background: #ffe8b0;  /* Or any other color/gradient */
+    overflow: auto;      /* Scroll main content if needed */
+  }
+
+  /* Video styling */
+#blastVideo {
+    width: 100%;                /* Makes the video responsive to container size */
+    max-width: 720px;           /* Adjust to your desired max width */
+    height: auto;
+    background-color: #000;     /* Fallback if the video fails to load */
+    display: block;
+    margin: 1rem auto;          /* Center in its container with some spacing */
+    border-radius: 8px;         /* Rounded corners */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+  }
+
+  
+  .blast-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+  
+  .blast-card {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 1rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  
+  .blast-card h2 {
+    margin-bottom: 0.5rem;
+  }
+  
+  .blast-card video {
+    display: block;
+    width: 100%; /* So it fits the card's width */
+    height: auto;
+    margin-bottom: 1rem;
+  }
+  

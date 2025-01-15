@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}
+  All Blasts
+{% endblock title %}
+
+{% block content %}
+<h1>All Blast Folders</h1>
+
+{% if not blasts %}
+  <p>No blasts found!</p>
+{% else %}
+  <div class="blast-grid">
+    {% for blast in blasts %}
+      <div class="blast-card">
+        <h2>{{ blast.folder }}</h2>
+
+        <!-- Video -->
+        <video width="400" controls>
+          <source src="{{ blast.video_url }}" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+
+        <p>
+          <a href="{{ blast.pdf_url }}" target="_blank">View PDF</a><br>
+          <a href="{{ blast.csv_url }}" target="_blank">Open CSV Plan</a>
+        </p>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+{% endblock content %}

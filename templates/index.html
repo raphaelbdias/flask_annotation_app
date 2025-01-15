@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Blast Video Annotation Tool
+{% endblock title %}
+
+{% block content %}
+
+<h1>Blast Video Annotation Tool</h1>
+
+<video id="blastVideo" controls>
+    <!-- FIXED: Correctly call url_for -->
+    <source src="{{ url_for('static', filename='328_109.MP4') }}" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
+<div class="controls">
+    <button id="back5"><< 5s</button>
+    <button id="forward5">5s >></button>
+</div>
+
+<div class="critical-moment">
+    <label>Critical Moment:</label>
+    <input type="number" id="criticalMomentInput" step="0.01" placeholder="e.g., 5.00s">
+    <button id="setCriticalBtn">Set</button>
+    <button id="goCriticalBtn">Go</button>
+</div>
+
+<div class="annotation-form">
+    <label>User:</label>
+    <input type="text" id="userInput" placeholder="Your name">
+    <br><br>
+    <label>Comment:</label>
+    <!-- FIXED: Escaped single quotes or used double quotes -->
+    <input type="text" id="commentInput" placeholder="e.g., &#39;Oversize rock at left corner&#39;">
+    <button id="saveBtn">Save Annotation</button>
+</div>
+
+<div id="message"></div>
+
+<div class="review-section">
+    <button id="refreshAnnotationsBtn">Refresh Annotations</button>
+    <div id="annotationsDisplay"></div>
+</div>
+
+<script>
+    const video = document.getElementById('blastVideo');
+    const back5Btn = document.getElementById('back5');
+    const forward5Btn = document.getElementById('forward5');
+    const userInput = document.getElementById('userInput');
+    const commentInput = document.getElementById('commentInput');
+    const saveBtn = document.getElementById('saveBtn');
+    const messageDiv = document.getElementById('message');
+
+    const criticalMomentInput = document.getElementById('criticalMomentInput');
+    const setCriticalBtn = document.getElementById('setCriticalBtn');
+    const goCriticalBtn = document.getElementById('goCriticalBtn');
+
+    const refreshAnnotationsBtn = document.getElementById('refreshAnnotationsBtn');
+    const annotationsDisplay = document.getElementById('annotationsDisplay');
+
+    // Hardcoded video_id for this demo (matches what we used in app.py)
+    const VIDEO_ID = "{{ video_id }}";
+
+    // Frame skip functionality
+    back5Btn.addEventListener('click', () => {
+        video.currentTime = Math.max(video.currentTime - 5, 0);
+    });
+    forward5Btn.addEventListener('click', () => {
+        video.currentTime = Math.min(video.currentTime + 5, video.duration);
+    });
+
+    // Save annotation
+    saveBtn.addEventListener('click', () => {
+        const currentTime = video.currentTime;
+        const comment = commentInput.value.trim();
+        const user = userInput.value.trim();
+
+        if (!comment || !user) {
+            alert("Please enter both User and Comment.");
+            return;
+        }
+
+        const annotationData = {
+            video_id: VIDEO_ID,
+            time: currentTime.toFixed(2),
+            comment: comment,
+            user: user
+        };
+
+        fetch('/save_annotation', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(annotationData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                showMessage("Annotation saved successfully!", "green");
+                commentInput.value = '';
+            } else {
+                showMessage("Error: " + data.message, "red");
+            }
+        })
+        .catch(err => {
+            console.error("Error saving annotation:", err);
+            showMessage("Error saving annotation.", "red");
+        });
+    });
+
+    // Set critical moment
+    setCriticalBtn.addEventListener('click', () => {
+        const momentValue = criticalMomentInput.value.trim();
+        if (!momentValue) {
+            alert("Please enter a valid critical moment time.");
+            return;
+        }
+        const data = {
+            video_id: VIDEO_ID,
+            critical_moment: parseFloat(momentValue)
+        };
+        fetch('/set_critical_moment', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(res => {
+            if (res.status === 'success') {
+                showMessage(`Critical moment set to ${res.critical_moment}s`, "green");
+            } else {
+                showMessage("Error setting critical moment", "red");
+            }
+        })
+        .catch(err => {
+            console.error("Error setting critical moment:", err);
+            showMessage("Error setting critical moment.", "red");
+        });
+    });
+
+    // Go to critical moment
+    goCriticalBtn.addEventListener('click', () => {
+        // Get current critical moment from the server
+        fetch(`/get_critical_moment?video_id=${VIDEO_ID}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.critical_moment !== null) {
+                video.currentTime = data.critical_moment;
+                showMessage(`Jumped to critical moment: ${data.critical_moment}s`, "green");
+            } else {
+                showMessage("No critical moment set for this video.", "orange");
+            }
+        })
+        .catch(err => {
+            console.error("Error fetching critical moment:", err);
+            showMessage("Error fetching critical moment.", "red");
+        });
+    });
+
+    // Refresh (review) annotations
+    refreshAnnotationsBtn.addEventListener('click', () => {
+        fetch(`/get_annotations?video_id=${VIDEO_ID}`)
+        .then(response => response.json())
+        .then(data => {
+            displayAnnotations(data);
+        })
+        .catch(err => {
+            console.error("Error fetching annotations:", err);
+            showMessage("Error fetching annotations.", "red");
+        });
+    });
+
+    function displayAnnotations(annotations) {
+        annotationsDisplay.innerHTML = '';
+        if (!annotations || annotations.length === 0) {
+            annotationsDisplay.innerHTML = '<p>No annotations yet.</p>';
+            return;
+        }
+        annotations.forEach(ann => {
+            const item = document.createElement('div');
+            item.className = 'annotation-item';
+            item.innerHTML = `
+                <strong>User:</strong> ${ann.user}<br>
+                <strong>Time:</strong> ${ann.time}s<br>
+                <strong>Comment:</strong> ${ann.comment}<br>
+                <em>Timestamp:</em> ${ann.timestamp}
+            `;
+            annotationsDisplay.appendChild(item);
+        });
+    }
+
+    function showMessage(msg, color="black") {
+        messageDiv.textContent = msg;
+        messageDiv.style.color = color;
+        setTimeout(() => {
+            messageDiv.textContent = '';
+        }, 4000);
+    }
+</script>
+
+{% endblock content %}
+

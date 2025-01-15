@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>{% block title %}My Flask App{% endblock title %}</title>
+  <!-- Link your external CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <h2 class="sidebar-title">Blast App</h2>
+    <ul class="nav-links">
+      <li><a href="{{ url_for('index') }}">Home</a></li>
+      <li><a href="{{ url_for('list_videos') }}">Blast History</a></li>
+      <li><a href="{{ url_for('review_annotations') }}">Another Feature</a></li>
+      <!-- Add more nav links as needed -->
+    </ul>
+  </div>
+
+  <!-- Main content area -->
+  <div class="main-content">
+    <!-- Sub-templates will inject their unique content here -->
+    {% block content %}
+    {% endblock %}
+  </div>
+
+</body>
+</html>
